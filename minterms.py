@@ -12,7 +12,7 @@ class Minterms:
     def get_m_list(self):
         return self._m_list
 
-    def get_n_variables(self):
+    def get_number_variables(self):
         return self._n_variables
 
     def get_m_dict(self):
@@ -22,8 +22,28 @@ class Minterms:
         return ceil(log(self._m_list[-1], 2))
 
     def set_m_dict(self):
-        for i in range(self._n_variables):
+        for i in range(self._n_variables+1):
             self._m_dict[i] = []
-
         for item in self._m_list:
-            self._m_dict[bin(item)[2:].count('1')].append(item)
+            self._m_dict[bin(item).count('1')].append(item)
+            print(self._m_dict)
+
+    def pair_data(self):
+        for i in range(self._n_variables):
+            self.pair_minterms(i)
+
+    def pair_minterms(self, i):
+        first_pairs=self._m_dict[i]
+        for first_pair in first_pairs:
+            #print(i,"pair", first_pair)
+            self.pair_minterm(first_pair,i)
+    
+    def pair_minterm(self, first_pair,i):
+        second_pairs=self._m_dict[i+1]
+        #print(i+1,"pairs",first_pair, ":",second_pairs)
+        for second_pair in second_pairs:
+            if(first_pair<second_pair):
+                if ceil(log(second_pair-first_pair,2)) == log(second_pair-first_pair,2):
+                    print(f"[{first_pair},{second_pair}]")
+
+

@@ -11,12 +11,16 @@ def get_data():
     except Exception as e:
         print(e)
         return []
+    
+
+
 
 def main():
     data = get_data()
     print(data)
-
     minterms = Minterms(data)
-    print(minterms.get_m_dict())
+    print(minterms.get_m_dict(),"\n")
+    minterms.pair_data()
+
 
 main()
