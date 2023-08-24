@@ -8,6 +8,8 @@ class Minterms:
 
         self._m_dict = dict()
         self.set_m_dict()
+        self._new_dict = {}
+        self.final_terms = []
 
     def get_m_list(self):
         return self._m_list
@@ -25,12 +27,18 @@ class Minterms:
         for i in range(self._n_variables+1):
             self._m_dict[i] = []
         for item in self._m_list:
-            self._m_dict[bin(item).count('1')].append(item)
-            print(self._m_dict)
+            self._m_dict[bin(item).count('1')].append([item])
+            # print(self._m_dict)
+
+    def initialize_new_dict(self):
+        for i in range(self._n_variables+1):
+            self._new_dict[i] = []
 
     def pair_data(self):
+        self.initialize_new_dict()
         for i in range(self._n_variables):
             self.pair_minterms(i)
+        self._m_dict = self._new_dict
 
     def pair_minterms(self, i):
         first_pairs=self._m_dict[i]
@@ -42,8 +50,13 @@ class Minterms:
         second_pairs=self._m_dict[i+1]
         #print(i+1,"pairs",first_pair, ":",second_pairs)
         for second_pair in second_pairs:
-            if(first_pair<second_pair):
-                if ceil(log(second_pair-first_pair,2)) == log(second_pair-first_pair,2):
-                    print(f"[{first_pair},{second_pair}]")
+            is_valid = True
+            for j in range(len(first_pair)):
+                if(first_pair[j]<second_pair[j]):
+                    if ceil(log(second_pair[j]-first_pair[j],2)) != log(second_pair[j]-first_pair[j],2):
+                        is_valid = False
+
+            if is_valid:
+                self._new_dict[i].append(first_pair+second_pair)
 
 

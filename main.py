@@ -18,9 +18,14 @@ def get_data():
 def main():
     data = get_data()
     print(data)
+
+    if len(data) == 0:
+        return
+
     minterms = Minterms(data)
     print(minterms.get_m_dict(),"\n")
     minterms.pair_data()
+    print(minterms.get_m_dict(),"\n")
 
 
 main()
