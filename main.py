@@ -23,9 +23,10 @@ def main():
         return
 
     minterms = Minterms(data)
-    print(minterms.get_m_dict(),"\n")
+    print(minterms.get_m_dict())
     minterms.pair_data()
-    print(minterms.get_m_dict(),"\n")
+    print(minterms.get_m_dict())
+    print(minterms.get_implicants())
 
 
 main()
