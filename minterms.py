@@ -11,7 +11,6 @@ class Minterms:
         self._new_dict = {}
         self.implicants = []
 
-
     def get_m_list(self):
         return self._m_list
 
@@ -23,7 +22,6 @@ class Minterms:
 
     def get_implicants(self):
         return self.implicants
-
 
     def set_number_of_variables(self):
         return ceil(log(self._m_list[-1], 2))

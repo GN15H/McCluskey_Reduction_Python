@@ -1,4 +1,5 @@
 from minterms import Minterms
+from table import Table
 
 def get_data():
     try:
@@ -30,10 +31,17 @@ def main():
     #print(minterms.get_m_dict())
     print(minterms.get_implicants())
     print(len(minterms.get_implicants()))
+    print(minterms._m_list)
+    table = Table(minterms._m_list,minterms.get_implicants())
+    table.show()
     #'''
-    #print(minterms.list_dashes([1,3,5,7]))
-    #print(minterms.list_dashes([33,35,37,39]))
-    #print(minterms.compare_list_dashes([1,3,5,7],[33,35,37,39]))
+    print(table.get_first_implicants())
+    table.propagate_implicants(table.get_first_implicants())
+    table.search_smallest_row()
+    print(" ")
+    table.show()
+    table.show_true_implicants()
+    table.show_checked_columns()
 
 
 main()
