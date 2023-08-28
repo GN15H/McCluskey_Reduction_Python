@@ -7,7 +7,7 @@ class Row:
         self._implicants=implicants
         self._minterms=minterms
         self._weight=len(implicants)
-        self._reductions= int(log(len(implicants),2))
+        self._reductions= len(implicants)
         self._row=list()
         self.create_row()
 

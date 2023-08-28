@@ -35,12 +35,16 @@ def main():
     table = Table(minterms._m_list,minterms.get_implicants())
     table.show()
     #'''
-    print(table.get_first_implicants())
+    print("PRIMERO IMPLICANTES SOLO UNA X",table.get_first_implicants())
     table.propagate_implicants(table.get_first_implicants())
-    table.search_smallest_row()
+    table.show()
+    #table.show_true_implicants()
+    #table.search_smallest_row()
+    #table.discard_duplicates()
+    #table.get_fattest_weight()
+    #table.traverse_columns()
     print(" ")
     table.show()
-    table.show_true_implicants()
     table.show_checked_columns()
 
 
