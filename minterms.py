@@ -85,12 +85,12 @@ class Minterms:
 
             for i in range(self._n_variables): #al final del ciclo se habra llenada _new_dict con las parejas nuevas y quitado de unused_terms aquellos terminos emparejados
                 self.pair_minterms(i, unused_terms)
-            print("------ESTOS SON LOS TERMINOS NO UTILIZADOS: ",unused_terms)
+            # print("------ESTOS SON LOS TERMINOS NO UTILIZADOS: ",unused_terms)
             self._m_dict = dict(self._new_dict) #se le pasa la info de _new_dict a _m_dict
             self.implicants += unused_terms   #variable que contiene los implicantes encontrados a lo largo de todo el proceso
-            print("++++++++++IMPLICANTES HASTA EL MOMENTO ",self.implicants)
-            print(self._new_dict)
-            print("---------------------------------------------------------")
+            # print("++++++++++IMPLICANTES HASTA EL MOMENTO ",self.implicants)
+            # print(self._new_dict)
+            # print("---------------------------------------------------------")
 
 
         #for item in self.implicants:
