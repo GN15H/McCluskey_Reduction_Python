@@ -79,6 +79,8 @@ class Table:
             if row.get_at(index)==1:
                 row.reduce_weight(i)
                 row.set_at(index,0)
+        self.show()
+        self.show_checked_columns()
     #RECORRE LA COLUMNA CORRESPONDIENTE AL 1 DEL PRIMER IMPLICANTE
 
     def search_smallest_row(self):
@@ -112,24 +114,31 @@ class Table:
     #BUSCA LA FILA CON MAYOR PASO Y LA ELIGE COMO IMPLICANTE
 
     def traverse_columns(self):
+        flag = True
         for index, (minterm, value) in enumerate(self._minterms_dict.items()):
             if not value and not self.is_finished():
-                self.traverse_columns_implicants(index, minterm,value)
+                if flag:
+                    self.traverse_columns_implicants(index, minterm, value, flag)
     #RECORRE LAS COLUMNAS QUE AUN NO HAN SIDO COBIJADAS
 
-    def traverse_columns_implicants(self,index,  minterm, value):
+    def traverse_columns_implicants(self,index,  minterm, value, flag):
         column_implicants=list()
         for row_index, row in enumerate(self._table):
             if row.get_at(index) and not row.get_is_discarded() and not row.get_is_implicant():
                 column_implicants.append(row)
         #print("MINTERMINO",minterm ,"FILAS IMPLICANTES",column_implicants)
-        self.compare_rows_discarded_reductions(column_implicants)
+        if len(column_implicants) != 0:
+            flag =  self.compare_rows_discarded_reductions(column_implicants)  
     #CREA UNA LISTA DE LAS FUNCIONES QUE COBIJAN CIERTA COLUMNA
 
     def compare_rows_discarded_reductions(self, column_implicants):
         discarded_reductions=list()
         for index, row in enumerate(column_implicants):
             self.get_discarded_weights(discarded_reductions, row)
+
+        flag = True
+        if all(reductions == discarded_reductions[0] for reductions in discarded_reductions):
+            flag = False
 
         #print("AVISOOOO MINTERMINO INDICE", index)
         minimum_reductions=min(discarded_reductions)
@@ -140,6 +149,7 @@ class Table:
         for index, row in enumerate(column_implicants):
             if index != discarded_reductions.index(minimum_reductions):
                 row.is_discarded()
+        return flag
     #RECORRE LOS IMPLICANTES QUE COBIJAN CIERTA COLUMNA
 
     def get_discarded_weights(self, discarded_reductions, row):
@@ -223,25 +233,23 @@ class Table:
 
     def solve(self):
         self.propagate_implicants(self.get_first_implicants())
-        if self.is_finished():
-            return
-        self.search_smallest_row()
-        if self.is_finished():
-            return
-        self.discard_duplicates()
         while not self.is_finished():
             self.search_smallest_row()
             print()
             self.show()
+            self.show_checked_columns()
             if not self.is_finished():
                 self.discard_duplicates()
                 print()
                 self.show()
+                self.show_checked_columns()
                 if not self.is_finished():
                     self.get_fattest_weight()
                     print()
                     self.show()
+                    self.show_checked_columns()
                     if not self.is_finished():
                         self.traverse_columns()
                         print()
                         self.show()
+                        self.show_checked_columns()
