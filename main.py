@@ -12,14 +12,10 @@ def get_data():
     except Exception as e:
         print(e)
         return []
-    
-
-
 
 def main():
     
     data = get_data()
-    print(data)
 
     if len(data) == 0:
         return
@@ -30,6 +26,5 @@ def main():
     table.show()
     print(" ")
     table.solve()
-
 
 main()

@@ -44,7 +44,7 @@ class Table:
         minterms_used=list()
         amount_of_x=0
         column=list()
-        for index, (minterm, value) in enumerate(self._minterms_dict.items()):
+        for index, minterm in enumerate(self._minterms_dict.keys()):
             amount_of_x=0
             for row in self._table:
                 if(row.get_at(index)):
@@ -80,7 +80,7 @@ class Table:
 
     def search_smallest_row(self):
         smallest=self.get_smallest_weight()
-        for index, row in enumerate(self._table):
+        for row in self._table:
             if not row.get_is_implicant() and  not row.get_is_discarded():
                 if row.get_weight() == smallest:
                     self.discard_smallest_row(row)
@@ -90,7 +90,7 @@ class Table:
         weight=row.get_weight()
         for index,item in enumerate(row.get_row()):
             if item == 1:
-                if self.search_coincidences_smallest_row(row.get_implicants(), weight, row.get_reductions(), index):
+                if self.search_coincidences_smallest_row(row.get_implicants(), weight, index):
                     weight-=1
 
         if weight == 0:
@@ -100,7 +100,7 @@ class Table:
     def search_fattest_row(self):
         biggest=self.get_fattest_weight()
         if(biggest != -1):
-            for index, row in enumerate(self._table):
+            for row in self._table:
                 if not row.get_is_implicant() and  not row.get_is_discarded():
                     if row.get_weight() == biggest:
                         row.is_implicant()
@@ -108,18 +108,16 @@ class Table:
 
     def traverse_columns(self):
         flag = True
-        for index, (minterm, value) in enumerate(self._minterms_dict.items()):
+        for index, value in enumerate(self._minterms_dict.values()):
             if not value and not self.is_finished():
                 if flag:
-                    print("COLUMNA", index)
-                    self.traverse_columns_implicants(index, minterm, value, flag)
-                    self.show()
+                    self.traverse_columns_implicants(index, flag)
     #RECORRE LAS COLUMNAS QUE AUN NO HAN SIDO COBIJADAS
 
-    def traverse_columns_implicants(self,index,  minterm, value, flag):
+    def traverse_columns_implicants(self,index, flag):
         column_implicants=list()
         column_implicants_weights=list()
-        for row_index, row in enumerate(self._table):
+        for row in self._table:
             if row.get_at(index) and not row.get_is_discarded() and not row.get_is_implicant():
                 column_implicants.append(row)
                 column_implicants_weights.append(row.get_weight())
@@ -136,8 +134,6 @@ class Table:
         if all(reductions == discarded_reductions[0] for reductions in discarded_reductions):
             flag = False
 
-        print("LISTA DE LOS PESOS IMPLICANTES",column_implicants_weight)
-        print("LISTA DE LAS REDUCCIONES",discarded_reductions)
         minimum_reductions=min(discarded_reductions) if min(column_implicants_weight) == max(column_implicants_weight) else discarded_reductions[column_implicants_weight.index(max(column_implicants_weight))]
         column_implicants[discarded_reductions.index(minimum_reductions)].is_implicant()
         self.propagate_implicants_row(column_implicants[discarded_reductions.index(minimum_reductions)])
@@ -152,11 +148,11 @@ class Table:
         total=0
         for index, item in enumerate(row.get_row()):
             if item:
-                total+=self.sum_discarded_weights(total, index, row)
+                total+=self.sum_discarded_weights(index, row)
         discarded_reductions.append(total)
     #REVISA LOS 1'S DE LA FILA IMPLICANTE PARA VER QUE OTRAS FILAS COMPARTEN ESE UNO
 
-    def sum_discarded_weights(self, total, index, passed_row):
+    def sum_discarded_weights(self, index, passed_row):
         aux_total=0
         for row in self._table:
             if row.get_at(index) and row.get_row() != passed_row.get_row() and not row.get_is_implicant() and not row.get_is_discarded():
@@ -164,7 +160,7 @@ class Table:
         return aux_total
     #SUMA EL TOTAL DE DESCARTES QUE HARÍA LA FILA IMPLICANTE
 
-    def search_coincidences_smallest_row(self, implicants, weight, reductions, index):
+    def search_coincidences_smallest_row(self, implicants, weight, index):
         coincidence=False
         for row in self._table:
             if row.get_implicants() != implicants and row.get_at(index) == 1  and weight<row.get_weight():
@@ -229,24 +225,12 @@ class Table:
         self.propagate_implicants(self.get_first_implicants())
         while not self.is_finished():
             self.search_smallest_row()
-            print()
-            self.show()
-            self.show_checked_columns()
             if not self.is_finished():
                 self.discard_duplicates()
-                print()
-                self.show()
-                self.show_checked_columns()
                 if not self.is_finished():
                     self.get_fattest_weight()
-                    print()
-                    self.show()
-                    self.show_checked_columns()
                     if not self.is_finished():
                         self.traverse_columns()
-                        print()
-                        self.show()
-                        self.show_checked_columns()
         self.show_function_terms()
     #RESOLVER TODO DE MANERA EXAGERADAMENTE GRASOSA
 

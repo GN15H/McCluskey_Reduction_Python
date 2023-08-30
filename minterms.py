@@ -85,17 +85,8 @@ class Minterms:
 
             for i in range(self._n_variables): #al final del ciclo se habra llenada _new_dict con las parejas nuevas y quitado de unused_terms aquellos terminos emparejados
                 self.pair_minterms(i, unused_terms)
-            # print("------ESTOS SON LOS TERMINOS NO UTILIZADOS: ",unused_terms)
             self._m_dict = dict(self._new_dict) #se le pasa la info de _new_dict a _m_dict
             self.implicants += unused_terms   #variable que contiene los implicantes encontrados a lo largo de todo el proceso
-            # print("++++++++++IMPLICANTES HASTA EL MOMENTO ",self.implicants)
-            # print(self._new_dict)
-            # print("---------------------------------------------------------")
-
-
-        #for item in self.implicants:
-        #    item.sort()
-        #    item = list(set(item))
 
         self.implicants = self.remove_duplicates_1(self.implicants)
     #FIN FUNCIÓN pair_data
@@ -112,20 +103,13 @@ class Minterms:
         for second_pair in second_pairs:
             is_valid = False
 
-            #if sum(first_pair)<sum(second_pair) and first_pair[0]<second_pair[0] and first_pair[int(log(len(second_pair), 2))]<second_pair[int(log(len(second_pair), 2))]:
-            #    if ceil(log(second_pair[0]-first_pair[0], 2)) == log(second_pair[int(log(len(second_pair), 2))] - first_pair[int(log(len(second_pair), 2))], 2):
-            #        is_valid = True
-
             if first_pair[0]<second_pair[0]:
                 if ceil(log(second_pair[0]-first_pair[0],2)) == log(second_pair[0]-first_pair[0],2) and self.compare_list_dashes(first_pair,second_pair):
                     is_valid = True
 
-
             if is_valid:
                 self._new_dict[i].append(first_pair+second_pair)  #añadir a _new_dict en la llave i y appendear los valores conjuntos de first_pair y second_pair
                 if first_pair in unused_terms:
-                    #print(first_pair, "SE EMPAREJO")
                     unused_terms.remove(first_pair)  #remover de unused_terms en caso de ser valido 
                 if second_pair in unused_terms: 
-                    #print(second_pair, "SE EMPAREJO")   
                     unused_terms.remove(second_pair)
