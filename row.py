@@ -27,9 +27,8 @@ class Row:
     def get_is_discarded(self):
         return self._is_discarded
 
-    def reduce_weight(self,i):
+    def reduce_weight(self):
         self._weight-=1
-        #print("Reducción a la fila",i)
     
     def get_weight(self):
         return self._weight

@@ -38,6 +38,7 @@ class Table:
                 weights.append(row.get_weight())
         result= max(weights) if weights.count(max(weights)) == 1 else -1 
         return result
+    #RETORNAR EL PESO MAS ALTO DE LA TABLA
 
     def get_first_implicants(self):
         first_implicants=list()
@@ -74,7 +75,7 @@ class Table:
     def propagate_implicants_columns(self, index):
         for i, row in enumerate(self._table):
             if row.get_at(index)==1:
-                row.reduce_weight(i)
+                row.reduce_weight()
                 row.set_at(index,0)
     #RECORRE LA COLUMNA CORRESPONDIENTE AL 1 DEL PRIMER IMPLICANTE
 
@@ -202,11 +203,11 @@ class Table:
         return is_finished
     #REVISA SI YA TODAS LAS COLUMNAS FUERON COBIJADAS
 
-#---------------------------------
     def show_true_implicants(self):
         for row in self._table:
             if row.get_is_implicant():
                 print(row.get_implicants())
+    #IMPRIMIR LAS FILAS IMPLICANTES
 
     def show_checked_columns(self):
         checked=list()
@@ -214,6 +215,7 @@ class Table:
             if(values):
                 checked.append(keys)
         print("COLUMNAS TOTALES COBIJADAS",checked)
+    #IMPRIMIR LAS COLUMNAS ABARCADAS
 
     def show(self):
         print(self._minterms)
@@ -241,6 +243,7 @@ class Table:
                 count += 1
 
         return count
+    #RETORNAR LA CANTIDAD DE TERMINOS EN LA SOLUCION
 
     def show_function_terms(self): 
         count = 0

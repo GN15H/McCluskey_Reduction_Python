@@ -10,7 +10,9 @@ class Minterms:
         self.set_m_dict()
         self._new_dict = {}
         self.implicants = []
+    #CONSTRUCTOR
 
+#GETTERS--------------------------
     def get_m_list(self):
         return self._m_list
 
@@ -25,6 +27,8 @@ class Minterms:
 
     def set_number_of_variables(self):
         return ceil(log(self._m_list[-1], 2))
+#-----------------------------------
+#SETTERS
 
     def set_m_dict(self):
         for i in range(self._n_variables+1):
@@ -35,20 +39,9 @@ class Minterms:
     def initialize_new_dict(self):
        for i in range(self._n_variables+1):
             self._new_dict[i] = []
+#------------------------------------
 
-    def remove_duplicates(self, lst):
-        seen = set()
-        result = []
-        
-        for inner_list in lst:
-            inner_tuple = tuple(inner_list)
-            if inner_tuple not in seen:
-                seen.add(inner_tuple)
-                result.append(inner_list)
-        
-        return result
-
-    def remove_duplicates_1(self, list):
+    def remove_duplicates(self, list):
         result=list
         aux_list_1=[]
         for sublist in list:
@@ -58,6 +51,7 @@ class Minterms:
                     if (aux_list_1 == sorted(sublist_2)):
                         del result[index]
         return result
+    #ELIMINAR AGRUPACIONES QUE REPRESENTEN LO MISMO
         
 
     def list_dashes(self, lst):
@@ -65,38 +59,37 @@ class Minterms:
         for i in range(int(log(len(lst),2))):
             dashes.append(int(log(lst[pow(2,i)]-lst[0],2)))
         return sorted(dashes)
+    #OBTENER LAS POSICIONES DEL BINARIO DONDE SE PONEN '-'
     
     def compare_list_dashes(self,lst1,lst2):
         flag=False
         if self.list_dashes(lst1) == self.list_dashes(lst2):
             flag=True
         return flag
-
+    #VERIFICAR SI SE TIENEN LOS MISMOS GUIONES
 
     def pair_data(self):
         unused_terms = []
         initial_length = 1
         while len(unused_terms) != initial_length:
-
             self.initialize_new_dict()
             unused_terms = [sublist for sublist_list in self._m_dict.values() for sublist in sublist_list] #contiene todos los elementos del emparejamiento
             initial_length = len(unused_terms)
-
 
             for i in range(self._n_variables): #al final del ciclo se habra llenada _new_dict con las parejas nuevas y quitado de unused_terms aquellos terminos emparejados
                 self.pair_minterms(i, unused_terms)
             self._m_dict = dict(self._new_dict) #se le pasa la info de _new_dict a _m_dict
             self.implicants += unused_terms   #variable que contiene los implicantes encontrados a lo largo de todo el proceso
 
-        self.implicants = self.remove_duplicates_1(self.implicants)
-    #FIN FUNCIÓN pair_data
-    
+        self.implicants = self.remove_duplicates(self.implicants)
+    #EMPAREJAMIENTO    
 
     def pair_minterms(self, i, unused_terms):
         first_pairs=self._m_dict[i]
         for first_pair in first_pairs:
             self.pair_minterm(first_pair,i, unused_terms)
-        self.remove_duplicates_1(self._m_dict[i])
+        self.remove_duplicates(self._m_dict[i])
+    #SUBFUNCION DE EMPAREJAMIENTO
     
     def pair_minterm(self, first_pair,i, unused_terms):
         second_pairs=self._m_dict[i+1]
@@ -113,3 +106,4 @@ class Minterms:
                     unused_terms.remove(first_pair)  #remover de unused_terms en caso de ser valido 
                 if second_pair in unused_terms: 
                     unused_terms.remove(second_pair)
+    #VALIDACION DE SI UN MINTERMINO ES EMPAREJABLE CON LOS DEL SIGUIENTE GRUPO
