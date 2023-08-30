@@ -1,15 +1,14 @@
-from math import log, ceil
+from math import log
 from row import Row
 
-
 class Table:
-    def __init__(self,minterms,implicants) -> None:
+    def __init__(self,minterms,implicants, n_variables) -> None:
         self._minterms=minterms
         self._minterms_dict= self.minterms_dict(minterms)
         self._implicants=implicants
         self._table=[] #contiene una lista de tipo Row
+        self.n_variables = n_variables
         self.create_table()
-        # print("Tabla creada")
     #CONSTRUCTOR
 
     def minterms_dict(self, minterms): #crea un diccionario que contiene de llaves los minterminos
@@ -38,7 +37,6 @@ class Table:
             if not row.get_is_implicant() and  not row.get_is_discarded():
                 weights.append(row.get_weight())
         result= max(weights) if weights.count(max(weights)) == 1 else -1 
-        # print(result)
         return result
 
     def get_first_implicants(self):
@@ -56,7 +54,6 @@ class Table:
                 if column not in first_implicants:
                     first_implicants.append(column)
                 minterms_used.append(minterm)
-        # print("MINTERMINOS COBIJADOS :",minterms_used)
         return first_implicants
     #RETORNA LOS PRIMEROS IMPLICANTES
 
@@ -79,8 +76,6 @@ class Table:
             if row.get_at(index)==1:
                 row.reduce_weight(i)
                 row.set_at(index,0)
-        #self.show()
-        #self.show_checked_columns()
     #RECORRE LA COLUMNA CORRESPONDIENTE AL 1 DEL PRIMER IMPLICANTE
 
     def search_smallest_row(self):
@@ -88,7 +83,6 @@ class Table:
         for index, row in enumerate(self._table):
             if not row.get_is_implicant() and  not row.get_is_discarded():
                 if row.get_weight() == smallest:
-                    # print("FILA MAS PEQUEÑA", index)
                     self.discard_smallest_row(row)
     #BUSCA FILAS QUE TENGAN EL MENOR PESO Y LLAMA self.discard_smallest_row()
 
@@ -109,12 +103,8 @@ class Table:
             for index, row in enumerate(self._table):
                 if not row.get_is_implicant() and  not row.get_is_discarded():
                     if row.get_weight() == biggest:
-                        # print("FILA MAS GRANDE", index)
                         row.is_implicant()
     #BUSCA LA FILA CON MAYOR PASO Y LA ELIGE COMO IMPLICANTE
-
-
-
 
     def traverse_columns(self):
         flag = True
@@ -133,8 +123,6 @@ class Table:
             if row.get_at(index) and not row.get_is_discarded() and not row.get_is_implicant():
                 column_implicants.append(row)
                 column_implicants_weights.append(row.get_weight())
-        #print("MINTERMINO",minterm ,"FILAS IMPLICANTES",column_implicants)
-        #print("FILAS IMPLICANTES DE LA COLUMNA",column_implicants[0].get_implicants(),column_implicants[1].get_implicants())
         if len(column_implicants) != 0:
             flag =  self.compare_rows_discarded_reductions(column_implicants, column_implicants_weights)  
     #CREA UNA LISTA DE LAS FUNCIONES QUE COBIJAN CIERTA COLUMNA
@@ -148,11 +136,9 @@ class Table:
         if all(reductions == discarded_reductions[0] for reductions in discarded_reductions):
             flag = False
 
-        #print("AVISOOOO MINTERMINO INDICE", index)
         print("LISTA DE LOS PESOS IMPLICANTES",column_implicants_weight)
         print("LISTA DE LAS REDUCCIONES",discarded_reductions)
         minimum_reductions=min(discarded_reductions) if min(column_implicants_weight) == max(column_implicants_weight) else discarded_reductions[column_implicants_weight.index(max(column_implicants_weight))]
-        # print("EL IMPLICANTE ES ", column_implicants[discarded_reductions.index(minimum_reductions)].get_implicants())
         column_implicants[discarded_reductions.index(minimum_reductions)].is_implicant()
         self.propagate_implicants_row(column_implicants[discarded_reductions.index(minimum_reductions)])
 
@@ -168,7 +154,6 @@ class Table:
             if item:
                 total+=self.sum_discarded_weights(total, index, row)
         discarded_reductions.append(total)
-        # print("REDUCCIONES TOTALES POR LA FILA",row.get_implicants(), total)
     #REVISA LOS 1'S DE LA FILA IMPLICANTE PARA VER QUE OTRAS FILAS COMPARTEN ESE UNO
 
     def sum_discarded_weights(self, total, index, passed_row):
@@ -222,7 +207,6 @@ class Table:
     #REVISA SI YA TODAS LAS COLUMNAS FUERON COBIJADAS
 
 #---------------------------------
-
     def show_true_implicants(self):
         for row in self._table:
             if row.get_is_implicant():
@@ -263,3 +247,45 @@ class Table:
                         print()
                         self.show()
                         self.show_checked_columns()
+        self.show_function_terms()
+    #RESOLVER TODO DE MANERA EXAGERADAMENTE GRASOSA
+
+    def count_implicants(self):
+        count = 0 
+        for row in self._table: 
+            if row.get_is_implicant(): 
+                count += 1
+
+        return count
+
+    def show_function_terms(self): 
+        count = 0
+        end = self.count_implicants()
+        for row in self._table: 
+            if row.get_is_implicant(): 
+                if count != (end-1): 
+                    print(self.translate_implicants(row.get_implicants()), end=' + ') 
+                    count+=1
+                else:
+                    print(self.translate_implicants(row.get_implicants())) 
+    #MOSTRAR RESULTADO
+
+    def translate_implicants(self, minterms_list):
+        string = list()
+        bin_str = format(minterms_list[0], f'0{self.n_variables}b')
+        for index, digit in enumerate(bin_str):
+            variable=str()
+            variable += chr(65 + index)
+            if digit=='0':
+                variable += "'"
+
+            string.append(variable)
+
+        for i in range(1, len(minterms_list)):
+            string[self.n_variables - int(log(minterms_list[i]-minterms_list[0], 2)) - 1] = 'x' 
+
+        string = [variable for variable in string if variable!='x']
+        string = "".join(string)
+
+        return string
+    #CONVERTIR MINTERMINOS EN SU REPRESENTACION DE LAS VARIABLES

@@ -26,7 +26,7 @@ def main():
 
     minterms = Minterms(data)
     minterms.pair_data()
-    table = Table(minterms._m_list,minterms.get_implicants())
+    table = Table(minterms._m_list,minterms.get_implicants(), minterms.get_number_variables())
     table.show()
     print(" ")
     table.solve()
