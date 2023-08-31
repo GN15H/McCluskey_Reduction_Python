@@ -19,6 +19,13 @@ def main():
 
     if len(data) == 0:
         return
+    elif len(data) == 1 :
+        if data[0] == 1:
+            print('A')
+            return
+        if data[0] == 0:
+            print("A'")
+            return
 
     minterms = Minterms(data)
     minterms.pair_data()

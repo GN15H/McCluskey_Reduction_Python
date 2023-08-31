@@ -274,5 +274,5 @@ class Table:
         string = [variable for variable in string if variable!='x']
         string = "".join(string)
 
-        return string
+        return string if len(string) != 0 else 1
     #CONVERTIR MINTERMINOS EN SU REPRESENTACION DE LAS VARIABLES
